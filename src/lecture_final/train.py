@@ -132,7 +132,8 @@ def test(
     )
 
 
-def main():
+def main() -> None:
+    """MNISTデータセットでCNNモデルを訓練・評価するメインプログラム"""
     # Training settings
     parser = argparse.ArgumentParser(description="PyTorch MNIST Example")
     parser.add_argument(
