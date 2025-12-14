@@ -6,9 +6,16 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.optim.lr_scheduler import StepLR
 from torchvision import datasets, transforms
-
+from typing import Tuple
+from torch.utils.data import DataLoader
 
 class Net(nn.Module):
+    """
+    MNIST分类用CNN模型
+    
+    2層の畳み込み層と2層の全結合層を持つシンプルなCNNモデル
+    """
+    
     def __init__(self) -> None:
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(1, 32, 3, 1)
@@ -19,6 +26,15 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(128, 10)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        順伝播
+        
+        Args:
+            x: 入力画像テンソル (batch_size, 1, 28, 28)
+            
+        Returns:
+            対数確率テンソル (batch_size, 10)
+        """
         x = self.conv1(x)
         x = F.relu(x)
         x = self.conv2(x)
@@ -34,7 +50,24 @@ class Net(nn.Module):
         return output
 
 
-def train(args, model, device, train_loader, optimizer, epoch):
+def train(args: argparse.Namespace,
+          model: nn.Module,
+          device: torch.device,
+          train_loader: DataLoader,
+          optimizer: torch.optim.Optimizer,
+          epoch: int) -> None:
+        """
+        モデルを訓練する
+        
+        Args:
+            args: コマンドライン引数
+            model: 訓練するニューラルネットワーク
+            device: 使用するデバイス (CPU/GPU)
+            train_loader: 訓練データのDataLoader
+            optimizer: オプティマイザ
+            epoch: 現在のエポック番号
+        """
+        
     model.train()
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
